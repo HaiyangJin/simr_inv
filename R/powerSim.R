@@ -63,7 +63,8 @@ powerSim <- function(
       # composite effect
       emm_cf <- emmeans::contrast(emm_fit,
                                   interaction = "pairwise",
-                                  infer=TRUE)
+                                  infer=TRUE) %>% 
+        as.data.frame()
       pval$cf_p <- emm_cf$p.value
       pval$cf_lb <- emm_cf$asymp.LCL
       pval$cf_ub <- emm_cf$asymp.UCL
@@ -73,13 +74,14 @@ powerSim <- function(
                                   interaction = "pairwise", 
                                   by = "Congruency", 
                                   infer = TRUE, 
-                                  adjust = "none")[1:2]
-      pval$fac_p <- emm_fi[1]$p.value
-      pval$fac_lb <- emm_fi[1]$asymp.LCL
-      pval$fac_ub <- emm_fi[1]$asymp.UCL
-      pval$int_p <- emm_fi[2]$p.value
-      pval$int_lb <- emm_fi[2]$asymp.LCL
-      pval$int_ub <- emm_fi[2]$asymp.UCL
+                                  adjust = "none")[1:2] %>% 
+        as.data.frame()
+      pval$fac_p <- emm_fi |> dplyr::filter(Congruency=="con") |> dplyr::pull(p.value)
+      pval$fac_lb <- emm_fi |> dplyr::filter(Congruency=="con") |> dplyr::pull(asymp.LCL)
+      pval$fac_ub <- emm_fi |> dplyr::filter(Congruency=="con") |> dplyr::pull(asymp.UCL)
+      pval$int_p <- emm_fi |> dplyr::filter(Congruency=="inc") |> dplyr::pull(p.value)
+      pval$int_lb <- emm_fi |> dplyr::filter(Congruency=="inc") |> dplyr::pull(asymp.LCL)
+      pval$int_ub <- emm_fi |> dplyr::filter(Congruency=="inc") |> dplyr::pull(asymp.UCL)
       
       return(pval)
     }
