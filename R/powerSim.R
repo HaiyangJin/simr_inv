@@ -106,7 +106,7 @@ powerSim <- function(
         return(pval)
     }
 
-    p <- maybe_raply(nsim, f(), .text="Simulating")
+    p <- f()
 
     # END TIMING
     timing <- proc.time() - start
@@ -134,8 +134,6 @@ powerSim <- function(
     rval $ timing <- timing
     rval $ simrTag <- observedPowerWarning(sim)
     
-    class(rval) <- "powerSim"
-    
     # custom added #############################################################
     rval $ cf_p <- p$cf_p
     rval $ cf_lb <- p$cf_lb
@@ -147,6 +145,8 @@ powerSim <- function(
     rval $ int_lb <- p$int_lb
     rval $ int_ub <- p$int_ub
     # custom added ends ########################################################
+
+    class(rval) <- "powerSim"
 
     .simrLastResult $ lastResult <- rval
 
