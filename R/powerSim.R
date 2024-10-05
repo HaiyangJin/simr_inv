@@ -55,6 +55,36 @@ powerSim <- function(
     test <- wrapTest(test)
     #p <- maybe_laply(z, test, .text="Testing")
 
+    # custom function to save more info from simulated fit #####################
+    custom_inv_test <- function(fit, pval){
+      # estimated marginal means
+      emm_fit <- emmeans::emmeans(fit, ~ Congruency + Alignment + CA)
+      
+      # composite effect
+      emm_cf <- emmeans::contrast(emm_fit,
+                                  interaction = "pairwise",
+                                  infer=TRUE)
+      pval$cf_p <- emm_cf$p.value
+      pval$cf_lb <- emm_cf$asymp.LCL
+      pval$cf_ub <- emm_cf$asymp.UCL
+      
+      # facilitation and interference
+      emm_fi <- emmeans::contrast(emm_fit, 
+                                  interaction = "pairwise", 
+                                  by = "Congruency", 
+                                  infer = TRUE, 
+                                  adjust = "none")[1:2]
+      pval$fac_p <- emm_fi[1]$p.value
+      pval$fac_lb <- emm_fi[1]$asymp.LCL
+      pval$fac_ub <- emm_fi[1]$asymp.UCL
+      pval$int_p <- emm_fi[2]$p.value
+      pval$int_lb <- emm_fi[2]$asymp.LCL
+      pval$int_ub <- emm_fi[2]$asymp.UCL
+      
+      return(pval)
+    }
+    # custom function ends #####################################################
+    
     f <- function() {
 
         # y <- doSim(sim, [opts])
@@ -69,6 +99,9 @@ powerSim <- function(
 
         # doTest(fit, test, [opts])
         tag(pval <- do.call(doTest, c(list(z, test), testOpts)), tag="Testing")
+        
+        # custom added
+        pval <- custom_inv_test(z, pval)
 
         return(pval)
     }
@@ -100,6 +133,18 @@ powerSim <- function(
 
     rval $ timing <- timing
     rval $ simrTag <- observedPowerWarning(sim)
+    
+    # custom added #############################################################
+    rval $ cf_p <- pval$cf_p
+    rval $ cf_lb <- pval$cf_lb
+    rval $ cf_ub <- pval$cf_ub
+    rval $ fac_p <- pval$fac_p
+    rval $ fac_lb <- pval$fac_lb
+    rval $ fac_ub <- pval$fac_ub
+    rval $ int_p <- pval$int_p
+    rval $ int_lb <- pval$int_lb
+    rval $ int_ub <- pval$int_ub
+    # custom added ends ########################################################
 
     class(rval) <- "powerSim"
 
