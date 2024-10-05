@@ -135,15 +135,15 @@ powerSim <- function(
     rval $ simrTag <- observedPowerWarning(sim)
     
     # custom added #############################################################
-    rval $ cf_p <- pval$cf_p
-    rval $ cf_lb <- pval$cf_lb
-    rval $ cf_ub <- pval$cf_ub
-    rval $ fac_p <- pval$fac_p
-    rval $ fac_lb <- pval$fac_lb
-    rval $ fac_ub <- pval$fac_ub
-    rval $ int_p <- pval$int_p
-    rval $ int_lb <- pval$int_lb
-    rval $ int_ub <- pval$int_ub
+    rval $ cf_p <- p$cf_p
+    rval $ cf_lb <- p$cf_lb
+    rval $ cf_ub <- p$cf_ub
+    rval $ fac_p <- p$fac_p
+    rval $ fac_lb <- p$fac_lb
+    rval $ fac_ub <- p$fac_ub
+    rval $ int_p <- p$int_p
+    rval $ int_lb <- p$int_lb
+    rval $ int_ub <- p$int_ub
     # custom added ends ########################################################
 
     class(rval) <- "powerSim"
